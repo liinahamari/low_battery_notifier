@@ -1,0 +1,5 @@
+<resources>
+    <string name="description_low_battery">Battery low! Please charge.</string>
+    <string name="title_battery_low">Battery low</string>
+    <string name="title_channel_low_battery">Low Battery Notifications</string>
+</resources>
