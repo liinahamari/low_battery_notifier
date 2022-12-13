@@ -17,18 +17,13 @@
 package dev.liinahamari.low_battery_notifier
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import android.os.Build
-import android.os.Bundle
 import androidx.annotation.VisibleForTesting
-import androidx.core.content.ContextCompat
 import dev.liinahamari.low_battery_notifier.di.APP_CONTEXT
-import dev.liinahamari.low_battery_notifier.helper.isAppInForeground
+import dev.liinahamari.low_battery_notifier.helper.activityImplicitLaunch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -52,26 +47,5 @@ class BatteryStateHandlingUseCase @Inject constructor(
                 context.activityImplicitLaunch(LowBatteryService::class.java, LowBatteryNotifierActivity::class.java)
             }
         }
-    }
-}
-
-/** workaround for Android 10 restrictions to launch activities in background:
- *  https://developer.android.com/guide/components/activities/background-starts
- * */
-fun Context.activityImplicitLaunch(service: Class<out Service>, activity: Class<out Activity>, bundle: Bundle? = null) {
-    if (Build.VERSION.SDK_INT >= 29 && isAppInForeground.not()) {
-        ContextCompat.startForegroundService(this, Intent(this, service).apply {
-            action = ACTION_SHOW_NOTIFICATION
-            bundle?.let { putExtras(it) }
-        })
-    } else {
-        startService(Intent(this, service).apply {
-            bundle?.let { putExtras(it) }
-            action = ACTION_STOP_FOREGROUND
-        })
-        startActivity(Intent(this, activity).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            bundle?.let { putExtras(it) }
-        })
     }
 }

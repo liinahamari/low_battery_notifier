@@ -20,6 +20,7 @@ import android.app.Activity
 import android.app.Notification
 import android.content.Intent
 import android.media.RingtoneManager
+import android.media.RingtoneManager.getDefaultUri
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.DrawableRes
@@ -48,8 +49,6 @@ internal class LowBatteryService : ForegroundService(), RxSubscriptionsDelegate 
         super.onDestroy()
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
-
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         when (intent.action) {
@@ -72,7 +71,7 @@ internal class LowBatteryService : ForegroundService(), RxSubscriptionsDelegate 
 
     private fun formNotification(intent: Intent): Notification =
         NotificationCompat.Builder(this@LowBatteryService, CHANNEL_BATTERY_LOW_ID)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .setSound(getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setSmallIcon(getIcon())
             .setContentText(getTitle(intent))
             .addAction(getCancelAction())
@@ -81,4 +80,6 @@ internal class LowBatteryService : ForegroundService(), RxSubscriptionsDelegate 
             .setCategory(CATEGORY_ALARM)
             .setFullScreenIntent(getFullscreenIntent(intent.extras, getActivity()), true)
             .build()
+
+    override fun onBind(intent: Intent?): IBinder? = null
 }

@@ -55,7 +55,7 @@ internal abstract class ForegroundService : Service() {
             getActionRequestCode(),
             Intent(this, this::class.java)
                 .apply { this.action = ACTION_TERMINATE },
-            FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            FLAG_IMMUTABLE
         )
     )
 
