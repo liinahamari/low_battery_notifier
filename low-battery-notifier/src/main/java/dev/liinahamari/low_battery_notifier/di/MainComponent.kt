@@ -19,9 +19,9 @@ package dev.liinahamari.low_battery_notifier.di
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import dev.liinahamari.low_battery_notifier.LowBatteryNotifierActivity
-import dev.liinahamari.low_battery_notifier.NotifierActivity
 import dev.liinahamari.low_battery_notifier.receivers.LowBatteryReceiver
+import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
+import dev.liinahamari.low_battery_notifier.ui.NotifierActivity
 import javax.inject.Singleton
 
 @Singleton

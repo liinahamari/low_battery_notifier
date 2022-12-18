@@ -31,6 +31,7 @@ import android.os.Vibrator
 import android.util.Log
 import androidx.core.content.ContextCompat.checkSelfPermission
 import dev.liinahamari.low_battery_notifier.di.APP_CONTEXT
+import dev.liinahamari.low_battery_notifier.helper.ext.isDndEnabled
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Named

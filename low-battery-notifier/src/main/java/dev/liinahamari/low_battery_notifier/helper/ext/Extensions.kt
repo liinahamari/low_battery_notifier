@@ -14,20 +14,26 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package dev.liinahamari.low_battery_notifier.receivers
+package dev.liinahamari.low_battery_notifier.helper.ext
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import dev.liinahamari.low_battery_notifier.helper.BatteryStateHandlingUseCase
-import dev.liinahamari.low_battery_notifier.mainComponent
-import javax.inject.Inject
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import androidx.annotation.ColorInt
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import java.util.concurrent.TimeUnit
 
-class LowBatteryReceiver : BroadcastReceiver() {
-    @Inject lateinit var batteryStateHandlingUseCase: BatteryStateHandlingUseCase
+fun minutesToMilliseconds(minutes: Long) = minutes * 1000 * 60
 
-    override fun onReceive(context: Context, intent: Intent) {
-        mainComponent.inject(this)
-        batteryStateHandlingUseCase.execute()
-    }
+/** Only for RxView elements!*/
+fun Observable<Unit>.throttleFirst(skipDurationMillis: Long = 750L): Observable<Unit> = compose {
+    it.throttleFirst(
+        skipDurationMillis,
+        TimeUnit.MILLISECONDS,
+        AndroidSchedulers.mainThread()
+    )
+}
+
+fun String.toColorfulString(@ColorInt color: Int) = SpannableString(this).apply {
+    setSpan(ForegroundColorSpan(color), 0, length, 0)
 }

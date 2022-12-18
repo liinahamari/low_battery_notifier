@@ -17,14 +17,14 @@
 
     <application>
         <activity
-            android:name=".AskPermissionActivity"
+            android:name=".ui.AskPermissionActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".LowBatteryNotifierActivity"
+            android:name=".ui.LowBatteryNotifierActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -32,7 +32,7 @@
         </activity>
 
         <service
-            android:name=".LowBatteryService"
+            android:name=".services.LowBatteryService"
             android:exported="false" />
 
         <receiver

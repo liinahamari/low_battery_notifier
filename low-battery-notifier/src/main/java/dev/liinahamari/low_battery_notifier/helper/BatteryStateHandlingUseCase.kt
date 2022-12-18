@@ -14,7 +14,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package dev.liinahamari.low_battery_notifier
+package dev.liinahamari.low_battery_notifier.helper
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -23,7 +23,9 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import androidx.annotation.VisibleForTesting
 import dev.liinahamari.low_battery_notifier.di.APP_CONTEXT
-import dev.liinahamari.low_battery_notifier.helper.activityImplicitLaunch
+import dev.liinahamari.low_battery_notifier.helper.ext.activityImplicitLaunch
+import dev.liinahamari.low_battery_notifier.services.LowBatteryService
+import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
 import javax.inject.Inject
 import javax.inject.Named
 

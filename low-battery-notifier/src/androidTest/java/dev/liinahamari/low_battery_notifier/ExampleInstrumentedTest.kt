@@ -16,19 +16,15 @@
 
 package dev.liinahamari.low_battery_notifier
 
-import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
 import io.github.kakaocup.kakao.screen.Screen
 import io.github.kakaocup.kakao.screen.Screen.Companion.onScreen
-
-import org.junit.Test
-import org.junit.runner.RunWith
-
 import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 class ExampleInstrumentedTest {

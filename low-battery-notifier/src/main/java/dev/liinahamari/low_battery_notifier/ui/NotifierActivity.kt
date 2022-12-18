@@ -14,7 +14,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package dev.liinahamari.low_battery_notifier
+package dev.liinahamari.low_battery_notifier.ui
 
 import android.app.KeyguardManager
 import android.os.Build
@@ -24,7 +24,9 @@ import android.view.WindowManager.LayoutParams.*
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import dev.liinahamari.low_battery_notifier.helper.minutesToMilliseconds
+import dev.liinahamari.low_battery_notifier.helper.ext.minutesToMilliseconds
+import dev.liinahamari.low_battery_notifier.mainComponent
+import dev.liinahamari.low_battery_notifier.services.DEFAULT_ALARM_PLAYING_TIME
 import javax.inject.Inject
 
 internal open class NotifierActivity(@LayoutRes layout: Int) : AppCompatActivity(layout) {

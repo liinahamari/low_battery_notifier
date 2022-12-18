@@ -19,6 +19,9 @@ package dev.liinahamari.low_battery_notifier.helper
 import android.app.AlarmManager.INTERVAL_FIFTEEN_MINUTES
 import android.content.SharedPreferences
 import dev.liinahamari.low_battery_notifier.BuildConfig
+import dev.liinahamari.low_battery_notifier.helper.ext.getIndex
+import dev.liinahamari.low_battery_notifier.helper.ext.minutesToMilliseconds
+import dev.liinahamari.low_battery_notifier.helper.ext.toTimeUnit
 import java.util.concurrent.TimeUnit
 
 private const val BATTERY_LEVEL_CHECK_FREQUENCY = "battery_level_check_frequency"

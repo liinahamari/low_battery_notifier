@@ -14,7 +14,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package dev.liinahamari.low_battery_notifier
+package dev.liinahamari.low_battery_notifier.services
 
 import android.app.Activity
 import android.app.Notification
@@ -27,8 +27,10 @@ import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.CATEGORY_ALARM
 import androidx.core.app.NotificationCompat.PRIORITY_MAX
+import dev.liinahamari.low_battery_notifier.R
 import dev.liinahamari.low_battery_notifier.helper.RxSubscriptionDelegateImpl
 import dev.liinahamari.low_battery_notifier.helper.RxSubscriptionsDelegate
+import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
 import java.security.SecureRandom
 
 internal const val CHANNEL_BATTERY_LOW_ID = "CHANNEL_BATTERY_LOW_ID"

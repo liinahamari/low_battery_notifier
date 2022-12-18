@@ -14,7 +14,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package dev.liinahamari.low_battery_notifier
+package dev.liinahamari.low_battery_notifier.services
 
 import android.app.Activity
 import android.app.PendingIntent
@@ -25,7 +25,7 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
-import dev.liinahamari.low_battery_notifier.helper.toColorfulString
+import dev.liinahamari.low_battery_notifier.helper.ext.toColorfulString
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import java.util.concurrent.TimeUnit

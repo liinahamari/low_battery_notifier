@@ -14,20 +14,9 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package dev.liinahamari.low_battery_notifier.receivers
+package dev.liinahamari.low_battery_notifier.helper.ext
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import dev.liinahamari.low_battery_notifier.helper.BatteryStateHandlingUseCase
-import dev.liinahamari.low_battery_notifier.mainComponent
-import javax.inject.Inject
+import java.util.concurrent.TimeUnit
 
-class LowBatteryReceiver : BroadcastReceiver() {
-    @Inject lateinit var batteryStateHandlingUseCase: BatteryStateHandlingUseCase
-
-    override fun onReceive(context: Context, intent: Intent) {
-        mainComponent.inject(this)
-        batteryStateHandlingUseCase.execute()
-    }
-}
+internal fun Int.toTimeUnit(): TimeUnit = TimeUnit.values()[this]
+internal fun TimeUnit.getIndex(): Int = TimeUnit.values().indexOf(this)

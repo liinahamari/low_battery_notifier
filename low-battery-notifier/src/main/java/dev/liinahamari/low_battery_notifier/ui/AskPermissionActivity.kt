@@ -14,15 +14,16 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package dev.liinahamari.low_battery_notifier
+package dev.liinahamari.low_battery_notifier.ui
 
 import android.Manifest
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.app.AppCompatActivity
+import dev.liinahamari.low_battery_notifier.R
+import dev.liinahamari.low_battery_notifier.helper.ext.toast
 import dev.liinahamari.low_battery_notifier.helper.stroboscopeSetupDialog
-import dev.liinahamari.low_battery_notifier.helper.toast
 
 internal class AskPermissionActivity : AppCompatActivity(R.layout.activity_ask_permission) {
     private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->

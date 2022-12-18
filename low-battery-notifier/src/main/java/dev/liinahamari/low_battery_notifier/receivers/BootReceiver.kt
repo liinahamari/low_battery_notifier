@@ -21,7 +21,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BOOT_COMPLETED
-import dev.liinahamari.low_battery_notifier.helper.scheduleLowBatteryChecker
+import dev.liinahamari.low_battery_notifier.helper.ext.scheduleLowBatteryChecker
 import javax.inject.Inject
 
 class BootReceiver : BroadcastReceiver() {

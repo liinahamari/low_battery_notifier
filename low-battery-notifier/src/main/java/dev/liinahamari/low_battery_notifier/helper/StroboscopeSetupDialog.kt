@@ -26,6 +26,8 @@ import com.afollestad.materialdialogs.checkbox.getCheckBoxPrompt
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import dev.liinahamari.low_battery_notifier.R
+import dev.liinahamari.low_battery_notifier.helper.ext.getIndex
+import dev.liinahamari.low_battery_notifier.helper.ext.toTimeUnit
 import java.util.concurrent.TimeUnit
 
 @Suppress("CheckResult")

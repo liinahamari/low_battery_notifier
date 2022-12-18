@@ -27,8 +27,10 @@ import dev.liinahamari.low_battery_notifier.di.DaggerMainComponent
 import dev.liinahamari.low_battery_notifier.di.MainComponent
 import dev.liinahamari.low_battery_notifier.helper.AppLifecycleListener
 import dev.liinahamari.low_battery_notifier.helper.Config
-import dev.liinahamari.low_battery_notifier.helper.scheduleLowBatteryChecker
-import dev.liinahamari.low_battery_notifier.helper.startActivity
+import dev.liinahamari.low_battery_notifier.helper.ext.scheduleLowBatteryChecker
+import dev.liinahamari.low_battery_notifier.helper.ext.startActivity
+import dev.liinahamari.low_battery_notifier.services.CHANNEL_BATTERY_LOW_ID
+import dev.liinahamari.low_battery_notifier.ui.AskPermissionActivity
 
 private const val PREFS_KEY = "Prefs"
 internal const val BATTERY_CHECKER_ID = 101
