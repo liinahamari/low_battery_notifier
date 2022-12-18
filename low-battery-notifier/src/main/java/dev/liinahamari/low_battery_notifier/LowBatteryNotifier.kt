@@ -18,29 +18,47 @@ package dev.liinahamari.low_battery_notifier
 
 import android.annotation.SuppressLint
 import android.app.*
+import android.app.AlarmManager.INTERVAL_FIFTEEN_MINUTES
 import android.content.Context
-import android.content.Intent
+import android.content.Context.MODE_PRIVATE
 import android.os.Build
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import dev.liinahamari.low_battery_notifier.di.DaggerMainComponent
 import dev.liinahamari.low_battery_notifier.di.MainComponent
 import dev.liinahamari.low_battery_notifier.helper.AppLifecycleListener
-import dev.liinahamari.low_battery_notifier.helper.minutesToMilliseconds
+import dev.liinahamari.low_battery_notifier.helper.Config
 import dev.liinahamari.low_battery_notifier.helper.scheduleLowBatteryChecker
-import dev.liinahamari.low_battery_notifier.receivers.LowBatteryReceiver
+import dev.liinahamari.low_battery_notifier.helper.startActivity
 
+private const val PREFS_KEY = "Prefs"
 internal const val BATTERY_CHECKER_ID = 101
 
 internal lateinit var mainComponent: MainComponent
 
-fun init(app: Application) {
+fun init(
+    app: Application,
+    requestStroboscopeFeature: Boolean = false,
+    batteryLevelCheckFrequency: Long = INTERVAL_FIFTEEN_MINUTES
+) {
     app.apply {
+        applyLibSettings(batteryLevelCheckFrequency)
         initDi()
         createLowBatteryNotificationChannel()
         scheduleLowBatteryChecker()
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleListener())
+
+        if (requestStroboscopeFeature) {
+            startActivity(AskPermissionActivity::class.java)
+        }
+    }
+}
+
+private fun Context.applyLibSettings(
+    checkingFrequency: Long
+) {
+    with(Config) {
+        preferences = getSharedPreferences(PREFS_KEY, MODE_PRIVATE)
+        this.batteryLevelCheckFrequency = checkingFrequency
     }
 }
 

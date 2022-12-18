@@ -2,4 +2,15 @@
     <string name="description_low_battery">Battery low! Please charge.</string>
     <string name="title_battery_low">Battery low</string>
     <string name="title_channel_low_battery">Low Battery Notifications</string>
+    <string name="stroboscope_on">Stroboscope on</string>
+    <string name="time_unit_nanos">Nanoseconds</string>
+    <string name="time_unit_micros">Microseconds</string>
+    <string name="time_unit_millis">Milliseconds</string>
+    <string name="time_unit_seconds">Seconds</string>
+    <string name="time_unit_minutes">Minutes</string>
+    <string name="time_unit_hours">Hours</string>
+    <string name="time_unit_days">Days</string>
+    <string name="time_unit">Time unit</string>
+    <string name="cam_permission_rationale">Without Camera permission the app is unable to use stroboscope in low battery notifications</string>
+    <string name="request_cam_permission">Request camera permission</string>
 </resources>

@@ -26,6 +26,8 @@ import android.os.PowerManager.WakeLock
 import android.view.WindowManager
 import dagger.Module
 import dagger.Provides
+import dev.liinahamari.low_battery_notifier.helper.Stroboscope
+import dev.liinahamari.low_battery_notifier.helper.StroboscopeImpl
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -68,4 +70,8 @@ internal open class ServiceModule {
     @Singleton
     fun provideAudioManager(@Named(APP_CONTEXT) context: Context): AudioManager =
         context.getSystemService(AUDIO_SERVICE) as AudioManager
+
+    @Provides
+    @Singleton
+    fun provideStroboscope(): Stroboscope = StroboscopeImpl()
 }

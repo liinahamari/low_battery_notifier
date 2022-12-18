@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="time_units">
+        <item>@string/time_unit_nanos</item>
+        <item>@string/time_unit_micros</item>
+        <item>@string/time_unit_millis</item>
+        <item>@string/time_unit_seconds</item>
+        <item>@string/time_unit_minutes</item>
+        <item>@string/time_unit_hours</item>
+        <item>@string/time_unit_days</item>
+    </string-array>
+</resources>

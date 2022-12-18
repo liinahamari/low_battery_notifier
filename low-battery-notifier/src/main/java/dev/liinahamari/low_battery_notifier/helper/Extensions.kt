@@ -1,13 +1,26 @@
+/*
+ * Copyright 2022-2023 liinahamari
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+ * (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package dev.liinahamari.low_battery_notifier.helper
 
-import android.app.Activity
-import android.app.AlarmManager
+import android.app.*
 import android.app.AlarmManager.INTERVAL_HALF_HOUR
 import android.app.AlarmManager.RTC_WAKEUP
-import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
-import android.app.Service
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -16,7 +29,10 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.widget.Toast
 import androidx.annotation.ColorInt
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import dev.liinahamari.low_battery_notifier.ACTION_SHOW_NOTIFICATION
 import dev.liinahamari.low_battery_notifier.ACTION_STOP_FOREGROUND
@@ -72,14 +88,24 @@ internal fun Context.activityImplicitLaunch(
     if (Build.VERSION.SDK_INT >= 29 && isAppInForeground.not()) {
         ContextCompat.startForegroundService(this, Intent(this, service).apply {
             action = ACTION_SHOW_NOTIFICATION
-            bundle?.let { putExtras(it) }
+            bundle?.let(::putExtras)
         })
     } else {
         startService(Intent(this, service).setAction(ACTION_STOP_FOREGROUND))
 
         startActivity(Intent(this, activity).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            bundle?.let { putExtras(it) }
+            bundle?.let(::putExtras)
         })
     }
+}
+
+fun Context.toast(@StringRes text: Int) {
+    Toast.makeText(this, getString(text), Toast.LENGTH_SHORT).show()
+}
+
+fun Application.startActivity(clazz: Class<out AppCompatActivity>) {
+    startActivity(Intent(this, clazz).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    })
 }

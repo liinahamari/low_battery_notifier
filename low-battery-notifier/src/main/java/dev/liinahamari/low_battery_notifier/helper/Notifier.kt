@@ -16,7 +16,9 @@
 
 package dev.liinahamari.low_battery_notifier.helper
 
+import android.Manifest.permission.CAMERA
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.AudioManager.RINGER_MODE_SILENT
@@ -27,6 +29,7 @@ import android.os.Build
 import android.os.VibrationEffect.createWaveform
 import android.os.Vibrator
 import android.util.Log
+import androidx.core.content.ContextCompat.checkSelfPermission
 import dev.liinahamari.low_battery_notifier.di.APP_CONTEXT
 import java.io.IOException
 import javax.inject.Inject
@@ -35,7 +38,8 @@ import javax.inject.Named
 internal class Notifier @Inject constructor(
     private val vibrator: Vibrator,
     private val audioManager: AudioManager,
-    @Named(APP_CONTEXT) private val context: Context
+    private val stroboscope: Stroboscope,
+    @Named(APP_CONTEXT) private val context: Context,
 ) : RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
     private var player: MediaPlayer? = null
     private val vibrationPattern = longArrayOf(0, 300, 300, 300)
@@ -43,6 +47,7 @@ internal class Notifier @Inject constructor(
     fun stop() {
         disposeSubscriptions()
         vibrator.cancel()
+        stroboscope.releaseStroboscope()
         player?.release()
         player = null
     }
@@ -51,6 +56,10 @@ internal class Notifier @Inject constructor(
         stop()
         ring()
         vibrate()
+
+        if (Config.stroboscopeOn && checkSelfPermission(context, CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            stroboscope.enableStroboscope(Config.batteryLevelCheckFrequency, Config.stroboscopeFrequencyTimeUnit)
+        }
     }
 
     private fun vibrate() {
