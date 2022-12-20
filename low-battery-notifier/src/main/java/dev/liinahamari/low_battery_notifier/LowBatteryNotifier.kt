@@ -31,6 +31,8 @@ import dev.liinahamari.low_battery_notifier.helper.ext.scheduleLowBatteryChecker
 import dev.liinahamari.low_battery_notifier.helper.ext.startActivity
 import dev.liinahamari.low_battery_notifier.services.CHANNEL_BATTERY_LOW_ID
 import dev.liinahamari.low_battery_notifier.ui.AskPermissionActivity
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 private const val PREFS_KEY = "Prefs"
 internal const val BATTERY_CHECKER_ID = 101
@@ -58,10 +60,14 @@ fun init(
 private fun Context.applyLibSettings(
     checkingFrequency: Long
 ) {
-    with(Config) {
-        preferences = getSharedPreferences(PREFS_KEY, MODE_PRIVATE)
-        this.batteryLevelCheckFrequency = checkingFrequency
+    Completable.fromCallable {
+        with(Config) {
+            preferences = getSharedPreferences(PREFS_KEY, MODE_PRIVATE)
+            this.batteryLevelCheckFrequency = checkingFrequency
+        }
     }
+        .subscribeOn(Schedulers.io())
+        .subscribe()
 }
 
 private fun Application.initDi() {

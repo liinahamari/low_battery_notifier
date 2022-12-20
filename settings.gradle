@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Low Battery Notifier"
-include ':app'
+include ':sample'
 include ':low-battery-notifier'

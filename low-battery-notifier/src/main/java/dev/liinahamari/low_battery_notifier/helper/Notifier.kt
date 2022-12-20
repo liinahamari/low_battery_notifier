@@ -28,11 +28,10 @@ import android.media.RingtoneManager.getDefaultUri
 import android.os.Build
 import android.os.VibrationEffect.createWaveform
 import android.os.Vibrator
-import android.util.Log
 import androidx.core.content.ContextCompat.checkSelfPermission
 import dev.liinahamari.low_battery_notifier.di.APP_CONTEXT
 import dev.liinahamari.low_battery_notifier.helper.ext.isDndEnabled
-import java.io.IOException
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -73,36 +72,30 @@ internal class Notifier @Inject constructor(
         }
     }
 
-    private fun createPlayer(): MediaPlayer? = try {
-        MediaPlayer().apply {
+    private fun ring() {
+        if (context.contentResolver.isDndEnabled().not()) {
+            Single.just(MediaPlayer())
+                .map { it.apply(::setupMediaPlayer) }
+                .doOnError { it.printStackTrace() }
+                .subscribeUi {
+                    player = it
+                    it.prepare()
+                    it.start()
+                }
+        }
+    }
+
+    private fun setupMediaPlayer(mediaPlayer: MediaPlayer) {
+        with(mediaPlayer) {
             reset()
             setAudioAttributes(audioAttributes)
             setDataSource(context, getDefaultUri(TYPE_ALARM))
             isLooping = true
         }
-    } catch (e: IOException) {
-        null
     }
 
     private val audioAttributes: AudioAttributes = AudioAttributes.Builder()
         .setUsage(AudioAttributes.USAGE_ALARM)
         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
         .build()
-
-    private fun ring() {
-        if (context.contentResolver.isDndEnabled().not()) {
-            player = createPlayer()?.apply {
-                try {
-                    if (isPlaying.not()) {
-                        prepare()
-                        start()
-                    }
-                } catch (e: IllegalStateException) {
-                    Log.e("", "Notifier.ring()", e)
-                } catch (e: IOException) {
-                    Log.e("", "Notifier.ring(), IOE", e)
-                }
-            }
-        }
-    }
 }
