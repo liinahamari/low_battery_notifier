@@ -12,5 +12,7 @@
     <string name="time_unit_days">Days</string>
     <string name="time_unit">Time unit</string>
     <string name="cam_permission_rationale">Without Camera permission the app is unable to use stroboscope in low battery notifications</string>
-    <string name="request_cam_permission">Request camera permission</string>
+    <string name="request_cam_permission">Request Camera permission</string>
+    <string name="request_notification_permission">Request Notification permission</string>
+    <string name="tiramisu_ongoing_service_explanation">Low Battery state checker</string>
 </resources>

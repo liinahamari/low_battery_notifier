@@ -16,9 +16,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package dev.liinahamari.low_battery_notifier
 
-import android.annotation.SuppressLint
-import android.app.*
 import android.app.AlarmManager.INTERVAL_FIFTEEN_MINUTES
+import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.os.Build
@@ -27,6 +26,7 @@ import dev.liinahamari.low_battery_notifier.di.DaggerMainComponent
 import dev.liinahamari.low_battery_notifier.di.MainComponent
 import dev.liinahamari.low_battery_notifier.helper.AppLifecycleListener
 import dev.liinahamari.low_battery_notifier.helper.Config
+import dev.liinahamari.low_battery_notifier.helper.ext.createNotificationChannel
 import dev.liinahamari.low_battery_notifier.helper.ext.scheduleLowBatteryChecker
 import dev.liinahamari.low_battery_notifier.helper.ext.startActivity
 import dev.liinahamari.low_battery_notifier.services.CHANNEL_BATTERY_LOW_ID
@@ -47,7 +47,11 @@ fun init(
     app.apply {
         applyLibSettings(batteryLevelCheckFrequency)
         initDi()
-        createLowBatteryNotificationChannel()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel(CHANNEL_BATTERY_LOW_ID, R.string.title_channel_low_battery)
+        }
+
         scheduleLowBatteryChecker()
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleListener())
 
@@ -74,16 +78,4 @@ private fun Application.initDi() {
     mainComponent = DaggerMainComponent.builder()
         .application(this)
         .build()
-}
-
-@SuppressLint("WrongConstant") private fun Application.createLowBatteryNotificationChannel() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        (getSystemService(NotificationManager::class.java) as NotificationManager).createNotificationChannel(
-            NotificationChannel(
-                CHANNEL_BATTERY_LOW_ID,
-                getString(R.string.title_channel_low_battery),
-                NotificationManager.IMPORTANCE_MAX
-            )
-        )
-    }
 }

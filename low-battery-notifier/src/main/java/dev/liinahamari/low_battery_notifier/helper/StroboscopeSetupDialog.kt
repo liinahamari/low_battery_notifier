@@ -55,14 +55,7 @@ internal fun AppCompatActivity.stroboscopeSetupDialog() = MaterialDialog(this)
     .apply {
         cancelable(false)
 
-        getActionButton(WhichButton.POSITIVE).apply {
-            isEnabled = false
-            setOnClickListener {
-                dismiss()
-                finish()
-            }
-        }
-
+        getActionButton(WhichButton.POSITIVE).isEnabled = false
         getCheckBoxPrompt().setOnCheckedChangeListener { _, isChecked ->
             getActionButton(WhichButton.POSITIVE).isEnabled = isChecked
         }

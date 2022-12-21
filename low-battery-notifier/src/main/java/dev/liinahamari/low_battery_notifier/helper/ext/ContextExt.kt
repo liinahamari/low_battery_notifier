@@ -16,14 +16,16 @@
 
 package dev.liinahamari.low_battery_notifier.helper.ext
 
+import android.annotation.SuppressLint
 import android.app.*
+import android.app.NotificationManager.*
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -75,8 +77,19 @@ internal fun Context.activityImplicitLaunch(
     }
 }
 
-fun Context.toast(@StringRes text: Int) {
-    Toast.makeText(this, getString(text), Toast.LENGTH_SHORT).show()
+@SuppressLint("WrongConstant")
+@RequiresApi(Build.VERSION_CODES.O)
+internal fun Context.createNotificationChannel(
+    name: String,
+    @StringRes description: Int,
+    @androidx.annotation.IntRange(
+        from = IMPORTANCE_NONE.toLong(),
+        to = IMPORTANCE_MAX.toLong()
+    ) importance: Int = IMPORTANCE_MAX
+) {
+    (getSystemService(NotificationManager::class.java) as NotificationManager).createNotificationChannel(
+        NotificationChannel(name, getString(description), importance)
+    )
 }
 
 fun Application.startActivity(clazz: Class<out AppCompatActivity>) {
