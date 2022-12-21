@@ -50,5 +50,5 @@ internal object Config {
     var stroboscopeFrequencyTimeUnit: TimeUnit
         get() = preferences.getInt(STROBOSCOPE_FREQUENCY_TIME_UNIT, DEFAULT_STROBOSCOPE_FREQUENCY_TIME_UNIT.getIndex())
             .toTimeUnit()
-        set(timeUnit) = preferences.edit().putInt(STROBOSCOPE_ON, timeUnit.getIndex()).apply()
+        set(timeUnit) = preferences.edit().putInt(STROBOSCOPE_FREQUENCY_TIME_UNIT, timeUnit.getIndex()).apply()
 }
