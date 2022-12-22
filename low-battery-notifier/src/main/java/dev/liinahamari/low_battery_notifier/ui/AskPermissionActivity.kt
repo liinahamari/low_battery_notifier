@@ -31,6 +31,7 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import dev.liinahamari.low_battery_notifier.R
 import dev.liinahamari.low_battery_notifier.databinding.ActivityAskPermissionBinding
 import dev.liinahamari.low_battery_notifier.helper.ext.createNotificationChannel
+import dev.liinahamari.low_battery_notifier.helper.ext.tiramisuOrMore
 import dev.liinahamari.low_battery_notifier.helper.stroboscopeSetupDialog
 import dev.liinahamari.low_battery_notifier.services.TIRAMISU_BATTERY_CHECKER_INVOKER_CHANNEL_ID
 import dev.liinahamari.low_battery_notifier.services.TiramisuBatteryCheckerInvoker
@@ -74,7 +75,7 @@ internal class AskPermissionActivity : AppCompatActivity(R.layout.activity_ask_p
     }
 
     private fun setupUi() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkSelfPermission(POST_NOTIFICATIONS) != PERMISSION_GRANTED) {
+        if (tiramisuOrMore() && checkSelfPermission(POST_NOTIFICATIONS) != PERMISSION_GRANTED) {
             ui.requestNotificationPermissionBtn.apply {
                 isVisible = true
                 setOnClickListener { notificationPermissionLauncher.launch(POST_NOTIFICATIONS) }

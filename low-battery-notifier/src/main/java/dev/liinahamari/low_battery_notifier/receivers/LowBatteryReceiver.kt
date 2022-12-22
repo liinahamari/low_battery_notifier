@@ -20,7 +20,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dev.liinahamari.low_battery_notifier.helper.BatteryStateHandlingUseCase
+import dev.liinahamari.low_battery_notifier.helper.Config
 import dev.liinahamari.low_battery_notifier.mainComponent
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class LowBatteryReceiver : BroadcastReceiver() {
@@ -28,6 +32,10 @@ class LowBatteryReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         mainComponent.inject(this)
-        batteryStateHandlingUseCase.execute()
+
+        Single.fromCallable { Config.lowBatteryThresholdLevel }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(batteryStateHandlingUseCase::execute)
     }
 }

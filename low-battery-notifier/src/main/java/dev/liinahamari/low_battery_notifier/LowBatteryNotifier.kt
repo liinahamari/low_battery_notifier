@@ -26,6 +26,7 @@ import dev.liinahamari.low_battery_notifier.di.DaggerMainComponent
 import dev.liinahamari.low_battery_notifier.di.MainComponent
 import dev.liinahamari.low_battery_notifier.helper.AppLifecycleListener
 import dev.liinahamari.low_battery_notifier.helper.Config
+import dev.liinahamari.low_battery_notifier.helper.DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE
 import dev.liinahamari.low_battery_notifier.helper.ext.createNotificationChannel
 import dev.liinahamari.low_battery_notifier.helper.ext.scheduleLowBatteryChecker
 import dev.liinahamari.low_battery_notifier.helper.ext.startActivity
@@ -42,10 +43,11 @@ internal lateinit var mainComponent: MainComponent
 fun init(
     app: Application,
     requestStroboscopeFeature: Boolean = false,
-    batteryLevelCheckFrequency: Long = INTERVAL_FIFTEEN_MINUTES
+    batteryLevelCheckFrequency: Long = INTERVAL_FIFTEEN_MINUTES,
+    lowBatteryThresholdLevel: Int = DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE
 ) {
     app.apply {
-        applyLibSettings(batteryLevelCheckFrequency)
+        applyLibSettings(batteryLevelCheckFrequency, lowBatteryThresholdLevel)
         initDi()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -62,12 +64,13 @@ fun init(
 }
 
 private fun Context.applyLibSettings(
-    checkingFrequency: Long
+    checkingFrequency: Long, lowBatteryThresholdLevel: Int
 ) {
     Completable.fromCallable {
         with(Config) {
             preferences = getSharedPreferences(PREFS_KEY, MODE_PRIVATE)
             this.batteryLevelCheckFrequency = checkingFrequency
+            this.lowBatteryThresholdLevel = lowBatteryThresholdLevel
         }
     }
         .subscribeOn(Schedulers.io())

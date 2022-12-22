@@ -16,12 +16,10 @@
 
 package dev.liinahamari.low_battery_notifier.helper
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import androidx.annotation.VisibleForTesting
 import dev.liinahamari.low_battery_notifier.di.APP_CONTEXT
 import dev.liinahamari.low_battery_notifier.helper.ext.activityImplicitLaunch
 import dev.liinahamari.low_battery_notifier.services.LowBatteryService
@@ -29,14 +27,11 @@ import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
 import javax.inject.Inject
 import javax.inject.Named
 
-@VisibleForTesting const val BATTERY_THRESHOLD_PERCENTAGE = 23
-
 class BatteryStateHandlingUseCase @Inject constructor(
     @Named(APP_CONTEXT) private val context: Context,
     @JvmField val batteryManager: BatteryManager? = null
 ) {
-    @SuppressLint("NewApi")
-    fun execute() {
+    fun execute(lowBatteryThresholdLevel: Int) {
         (batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
             ?: IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { intentFilter ->
                 context.registerReceiver(null, intentFilter)?.let { intent ->
@@ -45,7 +40,7 @@ class BatteryStateHandlingUseCase @Inject constructor(
                     level * 100 / scale.toFloat()
                 }
             }?.toInt())?.also {
-            if (it < BATTERY_THRESHOLD_PERCENTAGE) {
+            if (it < lowBatteryThresholdLevel) {
                 context.activityImplicitLaunch(LowBatteryService::class.java, LowBatteryNotifierActivity::class.java)
             }
         }

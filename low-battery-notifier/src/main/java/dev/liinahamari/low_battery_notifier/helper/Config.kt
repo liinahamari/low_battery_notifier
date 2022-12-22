@@ -24,6 +24,9 @@ import dev.liinahamari.low_battery_notifier.helper.ext.minutesToMilliseconds
 import dev.liinahamari.low_battery_notifier.helper.ext.toTimeUnit
 import java.util.concurrent.TimeUnit
 
+internal const val DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE = 25
+
+private const val BATTERY_LOW_THRESHOLD_LEVEL = "battery_low_threshold_level"
 private const val BATTERY_LEVEL_CHECK_FREQUENCY = "battery_level_check_frequency"
 private const val STROBOSCOPE_ON = "stroboscope_on"
 private const val STROBOSCOPE_FREQUENCY = "stroboscope_frequency"
@@ -31,6 +34,10 @@ private const val STROBOSCOPE_FREQUENCY_TIME_UNIT = "stroboscope_frequency_time_
 
 internal object Config {
     lateinit var preferences: SharedPreferences
+
+    var lowBatteryThresholdLevel: Int
+        get() = preferences.getInt(BATTERY_LOW_THRESHOLD_LEVEL, DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE)
+        set(level) = preferences.edit().putInt(BATTERY_LOW_THRESHOLD_LEVEL, level).apply()
 
     var batteryLevelCheckFrequency: Long
         get() = preferences.getLong(
