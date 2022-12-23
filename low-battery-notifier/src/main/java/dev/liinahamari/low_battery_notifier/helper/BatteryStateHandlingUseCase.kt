@@ -33,12 +33,10 @@ class BatteryStateHandlingUseCase @Inject constructor(
 ) {
     fun execute(lowBatteryThresholdLevel: Int) {
         (batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            ?: IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { intentFilter ->
-                context.registerReceiver(null, intentFilter)?.let { intent ->
-                    val level: Int = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-                    val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-                    level * 100 / scale.toFloat()
-                }
+            ?: context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.let { intent ->
+                val level: Int = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+                val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+                level * 100 / scale.toFloat()
             }?.toInt())?.also {
             if (it < lowBatteryThresholdLevel) {
                 context.activityImplicitLaunch(LowBatteryService::class.java, LowBatteryNotifierActivity::class.java)

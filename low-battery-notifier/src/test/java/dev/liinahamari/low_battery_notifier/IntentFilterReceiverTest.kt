@@ -17,6 +17,7 @@
 package dev.liinahamari.low_battery_notifier
 
 import android.content.Context
+import android.content.Intent
 import android.os.BatteryManager
 import dev.liinahamari.low_battery_notifier.helper.BatteryStateHandlingUseCase
 import dev.liinahamari.low_battery_notifier.helper.ext.activityImplicitLaunch
@@ -27,8 +28,7 @@ import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Test
 
-class BatteryManagerTest {
-    @MockK lateinit var batteryManager: BatteryManager
+class IntentFilterReceiverTest {
     @MockK lateinit var context: Context
 
     @Before
@@ -41,29 +41,45 @@ class BatteryManagerTest {
     }
 
     @Test
-    fun `when BatteryManager!=null && battery capacity lesser than threshold then activityImplicitLaunch func invoked`() {
-        every { batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) } returns 24
-        BatteryStateHandlingUseCase(context, batteryManager).execute(25)
+    fun `when Intent$ACTION_BATTERY_CHANGED returns LEVEL greater than threshold then activity shouldn't be started`() {
+        val intent = mockk<Intent>()
+        every { intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) } returns 25 /*battery is 25%*/
+        every { intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1) } returns 100
+        every { context.registerReceiver(any(), any()) } returns intent
+
+        BatteryStateHandlingUseCase(context, null).execute(24)
+        verify(exactly = 0) { context.activityImplicitLaunch(any(), any()) }
+    }
+
+    @Test
+    fun `when Intent$ACTION_BATTERY_CHANGED returns LEVEL equal to threshold then activity shouldn't be started`() {
+        val intent = mockk<Intent>()
+        every { intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) } returns 25 /*battery is 25%*/
+        every { intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1) } returns 100
+        every { context.registerReceiver(any(), any()) } returns intent
+
+        BatteryStateHandlingUseCase(context, null).execute(25)
+        verify(exactly = 0) { context.activityImplicitLaunch(any(), any()) }
+    }
+
+    @Test
+    fun `when Intent$ACTION_BATTERY_CHANGED returns LEVEL less than threshold then activity should be started`() {
+        val intent = mockk<Intent>()
+        every { intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) } returns 25 /*battery is 25%*/
+        every { intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1) } returns 100
+        every { context.registerReceiver(any(), any()) } returns intent
+
+        BatteryStateHandlingUseCase(context, null).execute(26)
         verify(exactly = 1) {
             context.activityImplicitLaunch(LowBatteryService::class.java, LowBatteryNotifierActivity::class.java)
         }
     }
 
     @Test
-    fun `when BatteryManager!=null && battery capacity greater than threshold then activityImplicitLaunch func invoked`() {
-        every { batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) } returns 100
-        BatteryStateHandlingUseCase(context, batteryManager).execute(25)
-        verify(exactly = 0) {
-            context.activityImplicitLaunch(LowBatteryService::class.java, LowBatteryNotifierActivity::class.java)
-        }
-    }
+    fun `when registerReceiver==null && BatteryManager==null then activityImplicitLaunch shouldn't be invoked`() {
+        every { context.registerReceiver(any(), any()) } returns null
 
-    @Test
-    fun `when BatteryManager!=null && battery capacity equal to threshold then activityImplicitLaunch func invoked`() {
-        every { batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) } returns 25
-        BatteryStateHandlingUseCase(context, batteryManager).execute(25)
-        verify(exactly = 0) {
-            context.activityImplicitLaunch(LowBatteryService::class.java, LowBatteryNotifierActivity::class.java)
-        }
+        BatteryStateHandlingUseCase(context, null).execute(26)
+        verify(exactly = 0) { context.activityImplicitLaunch(any(), any()) }
     }
 }
