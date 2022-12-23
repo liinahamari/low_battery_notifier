@@ -29,6 +29,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -39,11 +43,16 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.test.ext:junit-ktx:1.1.4'
     def lifecycle_version = "2.5.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common:$lifecycle_version"
+
+    def mockkVersion = "1.13.3"
+    testImplementation "io.mockk:mockk-android:${mockkVersion}"
+    testImplementation "io.mockk:mockk-agent:${mockkVersion}"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
