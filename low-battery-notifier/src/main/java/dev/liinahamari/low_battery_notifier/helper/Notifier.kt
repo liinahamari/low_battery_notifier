@@ -29,17 +29,15 @@ import android.os.Build
 import android.os.VibrationEffect.createWaveform
 import android.os.Vibrator
 import androidx.core.content.ContextCompat.checkSelfPermission
-import dev.liinahamari.low_battery_notifier.di.APP_CONTEXT
 import dev.liinahamari.low_battery_notifier.helper.ext.isDndEnabled
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
-import javax.inject.Named
 
 internal class Notifier @Inject constructor(
     private val vibrator: Vibrator,
     private val audioManager: AudioManager,
     private val stroboscope: Stroboscope,
-    @Named(APP_CONTEXT) private val context: Context,
+    private val context: Context,
 ) : RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
     private var player: MediaPlayer? = null
     private val vibrationPattern = longArrayOf(0, 300, 300, 300)

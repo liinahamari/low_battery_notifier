@@ -17,7 +17,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package dev.liinahamari.low_battery_notifier
 
 import android.app.AlarmManager.INTERVAL_FIFTEEN_MINUTES
-import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.os.Build
@@ -27,9 +26,7 @@ import dev.liinahamari.low_battery_notifier.di.MainComponent
 import dev.liinahamari.low_battery_notifier.helper.AppLifecycleListener
 import dev.liinahamari.low_battery_notifier.helper.Config
 import dev.liinahamari.low_battery_notifier.helper.DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE
-import dev.liinahamari.low_battery_notifier.helper.ext.createNotificationChannel
-import dev.liinahamari.low_battery_notifier.helper.ext.scheduleLowBatteryChecker
-import dev.liinahamari.low_battery_notifier.helper.ext.startActivity
+import dev.liinahamari.low_battery_notifier.helper.ext.*
 import dev.liinahamari.low_battery_notifier.services.CHANNEL_BATTERY_LOW_ID
 import dev.liinahamari.low_battery_notifier.ui.AskPermissionActivity
 import io.reactivex.rxjava3.core.Completable
@@ -41,12 +38,12 @@ internal const val BATTERY_CHECKER_ID = 101
 internal lateinit var mainComponent: MainComponent
 
 fun init(
-    app: Application,
+    context: Context,
     requestStroboscopeFeature: Boolean = false,
     batteryLevelCheckFrequency: Long = INTERVAL_FIFTEEN_MINUTES,
     lowBatteryThresholdLevel: Int = DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE
 ) {
-    app.apply {
+    context.applicationContext.apply {
         applyLibSettings(batteryLevelCheckFrequency, lowBatteryThresholdLevel)
         initDi()
 
@@ -54,10 +51,13 @@ fun init(
             createNotificationChannel(CHANNEL_BATTERY_LOW_ID, R.string.title_channel_low_battery)
         }
 
-        scheduleLowBatteryChecker()
+        if (lessThanTiramisu()) {
+            scheduleLowBatteryChecker()
+        }
+
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleListener())
 
-        if (requestStroboscopeFeature) {
+        if (requestStroboscopeFeature || tiramisuOrMore()) {
             startActivity(AskPermissionActivity::class.java)
         }
     }
@@ -77,8 +77,8 @@ private fun Context.applyLibSettings(
         .subscribe()
 }
 
-private fun Application.initDi() {
+private fun Context.initDi() {
     mainComponent = DaggerMainComponent.builder()
-        .application(this)
+        .context(this)
         .build()
 }

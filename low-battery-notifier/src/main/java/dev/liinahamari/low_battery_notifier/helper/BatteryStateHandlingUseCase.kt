@@ -20,15 +20,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import dev.liinahamari.low_battery_notifier.di.APP_CONTEXT
 import dev.liinahamari.low_battery_notifier.helper.ext.activityImplicitLaunch
 import dev.liinahamari.low_battery_notifier.services.LowBatteryService
 import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
 import javax.inject.Inject
-import javax.inject.Named
 
 class BatteryStateHandlingUseCase @Inject constructor(
-    @Named(APP_CONTEXT) private val context: Context,
+    private val context: Context,
     @JvmField val batteryManager: BatteryManager? = null
 ) {
     fun execute(lowBatteryThresholdLevel: Int) {

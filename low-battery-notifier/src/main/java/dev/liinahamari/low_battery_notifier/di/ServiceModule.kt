@@ -16,7 +16,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package dev.liinahamari.low_battery_notifier.di
 
-import android.app.Application
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Context.*
@@ -28,38 +27,28 @@ import dagger.Module
 import dagger.Provides
 import dev.liinahamari.low_battery_notifier.helper.Stroboscope
 import dev.liinahamari.low_battery_notifier.helper.StroboscopeImpl
-import javax.inject.Named
 import javax.inject.Singleton
-
-internal const val APP_CONTEXT = "application_context"
 
 @Module
 internal open class ServiceModule {
     @Provides
     @Singleton
-    @Named(APP_CONTEXT)
-    fun provideContext(app: Application): Context = app.applicationContext
-
-    @Provides
-    @Singleton
-    fun provideBatteryManager(@Named(APP_CONTEXT) context: Context): BatteryManager? =
+    fun provideBatteryManager(context: Context): BatteryManager? =
         context.getSystemService(BATTERY_SERVICE) as BatteryManager?
 
     @Provides
     @Singleton
-    open fun provideKeyGuardManager(@Named(APP_CONTEXT) context: Context): KeyguardManager =
+    fun provideKeyGuardManager(context: Context): KeyguardManager =
         context.getSystemService(KEYGUARD_SERVICE) as KeyguardManager
 
     @Provides
     @Singleton
-    open fun provideWakeLock(@Named(APP_CONTEXT) context: Context): WakeLock =
-        (context.getSystemService(POWER_SERVICE) as PowerManager)
-            .newWakeLock(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, javaClass.simpleName)
-
+    fun provideWakeLock(context: Context): WakeLock = (context.getSystemService(POWER_SERVICE) as PowerManager)
+        .newWakeLock(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, javaClass.simpleName)
 
     @Provides
     @Singleton
-    fun provideVibrator(@Named(APP_CONTEXT) context: Context): Vibrator =
+    fun provideVibrator(context: Context): Vibrator =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             (context.getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
         } else {
@@ -68,8 +57,7 @@ internal open class ServiceModule {
 
     @Provides
     @Singleton
-    fun provideAudioManager(@Named(APP_CONTEXT) context: Context): AudioManager =
-        context.getSystemService(AUDIO_SERVICE) as AudioManager
+    fun provideAudioManager(context: Context): AudioManager = context.getSystemService(AUDIO_SERVICE) as AudioManager
 
     @Provides
     @Singleton

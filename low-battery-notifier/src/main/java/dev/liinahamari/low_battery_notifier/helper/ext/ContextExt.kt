@@ -37,7 +37,7 @@ import dev.liinahamari.low_battery_notifier.services.ACTION_SHOW_NOTIFICATION
 import dev.liinahamari.low_battery_notifier.services.ACTION_STOP_FOREGROUND
 
 /** Runs once-an-hour checker of battery state */
-fun Context.scheduleLowBatteryChecker(initialDelayInMinutes: Long = 1L) =
+fun Context.scheduleLowBatteryChecker(initialDelayInMinutes: Long = 1L) {
     (getSystemService(Context.ALARM_SERVICE) as AlarmManager).setRepeating(
         AlarmManager.RTC_WAKEUP,
         System.currentTimeMillis() + minutesToMilliseconds(initialDelayInMinutes),
@@ -49,6 +49,7 @@ fun Context.scheduleLowBatteryChecker(initialDelayInMinutes: Long = 1L) =
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
     )
+}
 
 fun ContentResolver.isDndEnabled(): Boolean = kotlin.runCatching {
     Settings.Global.getInt(this, "zen_mode")
@@ -92,7 +93,7 @@ internal fun Context.createNotificationChannel(
     )
 }
 
-fun Application.startActivity(clazz: Class<out AppCompatActivity>) {
+fun Context.startActivity(clazz: Class<out AppCompatActivity>) {
     startActivity(Intent(this, clazz).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     })

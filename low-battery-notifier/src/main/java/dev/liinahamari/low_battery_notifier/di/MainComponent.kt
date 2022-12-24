@@ -16,7 +16,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package dev.liinahamari.low_battery_notifier.di
 
-import android.app.Application
+import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import dev.liinahamari.low_battery_notifier.receivers.LowBatteryReceiver
@@ -30,7 +30,7 @@ internal interface MainComponent {
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun application(app: Application): Builder
+        fun context(context: Context): Builder
         fun build(): MainComponent
     }
 
