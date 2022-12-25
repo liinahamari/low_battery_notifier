@@ -9,18 +9,8 @@ plugins {
 
 android {
     namespace 'dev.liinahamari.low_battery_notifier'
-    compileSdk 33
-
     buildFeatures {
         viewBinding true
-    }
-
-    defaultConfig {
-        minSdk 23
-        targetSdk 33
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -29,50 +19,33 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
-dependencies {
-    implementation 'androidx.test.ext:junit-ktx:1.1.4'
-    def lifecycle_version = "2.5.1"
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-common:$lifecycle_version"
+setupDefaultModuleConfig(android)
 
-    def mockkVersion = "1.13.3"
+dependencies {
+    /* DAGGER */
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$deggerProcessorVersion"
+
+    /* LIFECYCLE */
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-process:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-common:$lifecycleVersion"
+
     testImplementation "io.mockk:mockk-android:${mockkVersion}"
     testImplementation "io.mockk:mockk-agent:${mockkVersion}"
+
+    /* CORE */
+    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+    implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
-
-    implementation 'com.afollestad.material-dialogs:core:3.3.0'
-    implementation 'com.afollestad.material-dialogs:input:3.3.0'
-
     implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.3'
-    androidTestImplementation 'io.github.kakaocup:kakao:3.0.2'
-    androidTestImplementation 'androidx.test:rules:1.5.0'
-
-    /* DAGGER */
-    implementation 'com.google.dagger:dagger:2.40'
-    kapt 'com.google.dagger:dagger-compiler:2.40'
-    kapt 'com.google.dagger:dagger-android-processor:2.15'
 
     /* RX */
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
@@ -81,4 +54,12 @@ dependencies {
     implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0'
     implementation 'com.jakewharton.rxbinding4:rxbinding-core:4.0.0'
     implementation 'com.jakewharton.rxbinding4:rxbinding-appcompat:4.0.0'
+
+    /* TESTING */
+    androidTestImplementation 'io.github.kakaocup:kakao:3.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    testImplementation 'org.robolectric:robolectric:4.9'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 }
