@@ -20,7 +20,7 @@ import android.Manifest.permission.CAMERA
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.NotificationManager.IMPORTANCE_MAX
+import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
@@ -46,13 +46,7 @@ internal class AskPermissionActivity : AppCompatActivity(R.layout.activity_ask_p
     private val notificationPermissionLauncher =
         registerForActivityResult(RequestPermission()) { isGranted ->
             if (isGranted) {
-                (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
-                    NotificationChannel(
-                        TIRAMISU_BATTERY_CHECKER_INVOKER_CHANNEL_ID,
-                        getString(R.string.tiramisu_ongoing_service_explanation), IMPORTANCE_MAX
-                    )
-                )
-
+                createCheckerForegroundServiceChannel()
                 startForegroundService(Intent(this, TiramisuBatteryCheckerInvoker::class.java))
 
                 ui.requestNotificationPermissionBtn.isEnabled = false
@@ -61,6 +55,16 @@ internal class AskPermissionActivity : AppCompatActivity(R.layout.activity_ask_p
                 }
             }
         }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun createCheckerForegroundServiceChannel() {
+        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
+            NotificationChannel(
+                TIRAMISU_BATTERY_CHECKER_INVOKER_CHANNEL_ID,
+                getString(R.string.tiramisu_ongoing_service_explanation), IMPORTANCE_HIGH
+            )
+        )
+    }
 
     private val cameraPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
         if (isGranted) {

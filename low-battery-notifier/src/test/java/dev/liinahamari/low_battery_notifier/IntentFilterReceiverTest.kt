@@ -33,11 +33,8 @@ class IntentFilterReceiverTest {
 
     @Before
     fun setUp() {
-        MockKAnnotations.init(this)
+        MockKAnnotations.init(this, relaxed = true)
         mockkStatic("dev.liinahamari.low_battery_notifier.helper.ext.ContextExtKt")
-        every { context.activityImplicitLaunch(any(), any(), any()) } returns Unit
-        every { context.startService(any()) } returns mockk()
-        every { context.startActivity(any()) } returns mockk()
     }
 
     @Test

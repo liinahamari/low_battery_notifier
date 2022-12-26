@@ -22,8 +22,11 @@ import dev.liinahamari.low_battery_notifier.helper.BatteryStateHandlingUseCase
 import dev.liinahamari.low_battery_notifier.helper.ext.activityImplicitLaunch
 import dev.liinahamari.low_battery_notifier.services.LowBatteryService
 import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 
@@ -33,11 +36,8 @@ class BatteryManagerTest {
 
     @Before
     fun setUp() {
-        MockKAnnotations.init(this)
+        MockKAnnotations.init(this, relaxed = true)
         mockkStatic("dev.liinahamari.low_battery_notifier.helper.ext.ContextExtKt")
-        every { context.activityImplicitLaunch(any(), any(), any()) } returns Unit
-        every { context.startService(any()) } returns mockk()
-        every { context.startActivity(any()) } returns mockk()
     }
 
     @Test
