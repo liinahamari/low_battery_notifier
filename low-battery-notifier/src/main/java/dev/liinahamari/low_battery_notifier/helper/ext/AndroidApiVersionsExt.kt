@@ -7,3 +7,6 @@ import androidx.annotation.ChecksSdkIntAtLeast
 fun tiramisuOrMore(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
 fun lessThanTiramisu(): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
+fun oreoOrMore(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O

@@ -18,7 +18,6 @@ ext {
     materialDialogsVersion = '3.3.0'
 }
 
-
 def setupDefaultModuleConfig(CommonExtension it) {
     it.compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -50,5 +49,8 @@ def setupDefaultModuleConfig(CommonExtension it) {
     it.testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
         unitTests.returnDefaultValues = true
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 }

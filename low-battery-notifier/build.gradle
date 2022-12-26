@@ -26,6 +26,7 @@ setupDefaultModuleConfig(android)
 dependencies {
     /* DAGGER */
     implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation 'androidx.test.ext:junit-ktx:1.1.4'
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     kapt "com.google.dagger:dagger-android-processor:$deggerProcessorVersion"
 

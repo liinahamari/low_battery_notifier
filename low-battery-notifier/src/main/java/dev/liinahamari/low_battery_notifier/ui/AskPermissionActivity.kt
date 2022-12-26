@@ -18,6 +18,9 @@ package dev.liinahamari.low_battery_notifier.ui
 
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.NotificationManager.IMPORTANCE_MAX
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
@@ -25,12 +28,12 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import dev.liinahamari.low_battery_notifier.R
 import dev.liinahamari.low_battery_notifier.databinding.ActivityAskPermissionBinding
-import dev.liinahamari.low_battery_notifier.helper.ext.createNotificationChannel
 import dev.liinahamari.low_battery_notifier.helper.ext.tiramisuOrMore
 import dev.liinahamari.low_battery_notifier.helper.stroboscopeSetupDialog
 import dev.liinahamari.low_battery_notifier.services.TIRAMISU_BATTERY_CHECKER_INVOKER_CHANNEL_ID
@@ -43,9 +46,11 @@ internal class AskPermissionActivity : AppCompatActivity(R.layout.activity_ask_p
     private val notificationPermissionLauncher =
         registerForActivityResult(RequestPermission()) { isGranted ->
             if (isGranted) {
-                createNotificationChannel(
-                    TIRAMISU_BATTERY_CHECKER_INVOKER_CHANNEL_ID,
-                    R.string.tiramisu_ongoing_service_explanation
+                (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
+                    NotificationChannel(
+                        TIRAMISU_BATTERY_CHECKER_INVOKER_CHANNEL_ID,
+                        getString(R.string.tiramisu_ongoing_service_explanation), IMPORTANCE_MAX
+                    )
                 )
 
                 startForegroundService(Intent(this, TiramisuBatteryCheckerInvoker::class.java))
@@ -62,7 +67,7 @@ internal class AskPermissionActivity : AppCompatActivity(R.layout.activity_ask_p
             stroboscopeSetupDialog()
                 .onDismiss {
                     ui.requestCamPermissionBtn.isEnabled = false
-                    if (ui.requestNotificationPermissionBtn.isEnabled.not()) {
+                    if (ui.requestNotificationPermissionBtn.isGone || ui.requestNotificationPermissionBtn.isEnabled.not()) {
                         finish()
                     }
                 }.show()

@@ -17,16 +17,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package dev.liinahamari.low_battery_notifier.receivers
 
 import android.app.AlarmManager
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BOOT_COMPLETED
 import dev.liinahamari.low_battery_notifier.helper.ext.scheduleLowBatteryChecker
-import javax.inject.Inject
 
 class BootReceiver : BroadcastReceiver() {
-    @Inject lateinit var alarmManager: AlarmManager
-
     /**
      * To test "boot completed" event is handling you'll need a rooted device and run in terminal:
      *  adb root
@@ -36,7 +34,8 @@ class BootReceiver : BroadcastReceiver() {
      * */
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == ACTION_BOOT_COMPLETED) {
-            context.scheduleLowBatteryChecker()
+            (context.getSystemService(Service.ALARM_SERVICE) as AlarmManager)
+                .scheduleLowBatteryChecker(context = context)
         }
     }
 }

@@ -1,5 +1,6 @@
 package dev.liinahamari.low_battery_notifier.services
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
@@ -14,7 +15,7 @@ private const val TIRAMISU_BATTERY_CHECKER_INVOKER_ID = 1001
 internal class TiramisuBatteryCheckerInvoker : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY.also {
         startForeground(TIRAMISU_BATTERY_CHECKER_INVOKER_ID, formNotification())
-        scheduleLowBatteryChecker()
+        (getSystemService(ALARM_SERVICE) as AlarmManager).scheduleLowBatteryChecker(context = applicationContext)
     }
 
     private fun formNotification(): Notification =

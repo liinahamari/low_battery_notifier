@@ -16,10 +16,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package dev.liinahamari.low_battery_notifier
 
+import android.app.AlarmManager
 import android.app.AlarmManager.INTERVAL_FIFTEEN_MINUTES
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.os.Build
+import android.content.Context.*
 import androidx.lifecycle.ProcessLifecycleOwner
 import dev.liinahamari.low_battery_notifier.di.DaggerMainComponent
 import dev.liinahamari.low_battery_notifier.di.MainComponent
@@ -39,6 +41,8 @@ internal lateinit var mainComponent: MainComponent
 
 fun init(
     context: Context,
+    alarmManager: AlarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager,
+    notificationManager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager,
     requestStroboscopeFeature: Boolean = false,
     batteryLevelCheckFrequency: Long = INTERVAL_FIFTEEN_MINUTES,
     lowBatteryThresholdLevel: Int = DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE
@@ -46,13 +50,10 @@ fun init(
     context.applicationContext.apply {
         applyLibSettings(batteryLevelCheckFrequency, lowBatteryThresholdLevel)
         initDi()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(CHANNEL_BATTERY_LOW_ID, R.string.title_channel_low_battery)
-        }
+        createLowBatteryNotificationChannel(notificationManager)
 
         if (lessThanTiramisu()) {
-            scheduleLowBatteryChecker()
+            alarmManager.scheduleLowBatteryChecker(context = context)
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleListener())
@@ -60,6 +61,18 @@ fun init(
         if (requestStroboscopeFeature || tiramisuOrMore()) {
             startActivity(AskPermissionActivity::class.java)
         }
+    }
+}
+
+fun Context.createLowBatteryNotificationChannel(notificationManager: NotificationManager) {
+    if (oreoOrMore()) {
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_BATTERY_LOW_ID,
+                getString(R.string.title_channel_low_battery),
+                NotificationManager.IMPORTANCE_MAX
+            )
+        )
     }
 }
 

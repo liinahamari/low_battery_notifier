@@ -16,17 +16,16 @@
 
 package dev.liinahamari.low_battery_notifier.helper.ext
 
-import android.annotation.SuppressLint
-import android.app.*
-import android.app.NotificationManager.*
+import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import dev.liinahamari.low_battery_notifier.BATTERY_CHECKER_ID
@@ -37,15 +36,15 @@ import dev.liinahamari.low_battery_notifier.services.ACTION_SHOW_NOTIFICATION
 import dev.liinahamari.low_battery_notifier.services.ACTION_STOP_FOREGROUND
 
 /** Runs once-an-hour checker of battery state */
-fun Context.scheduleLowBatteryChecker(initialDelayInMinutes: Long = 1L) {
-    (getSystemService(Context.ALARM_SERVICE) as AlarmManager).setRepeating(
+fun AlarmManager.scheduleLowBatteryChecker(initialDelayInMinutes: Long = 1L, context: Context) {
+    setRepeating(
         AlarmManager.RTC_WAKEUP,
         System.currentTimeMillis() + minutesToMilliseconds(initialDelayInMinutes),
         if (BuildConfig.DEBUG) minutesToMilliseconds(1) else AlarmManager.INTERVAL_HALF_HOUR,
         PendingIntent.getBroadcast(
-            this,
+            context,
             BATTERY_CHECKER_ID,
-            Intent(this, LowBatteryReceiver::class.java),
+            Intent(context, LowBatteryReceiver::class.java),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
     )
@@ -76,21 +75,6 @@ internal fun Context.activityImplicitLaunch(
             bundle?.let(::putExtras)
         })
     }
-}
-
-@SuppressLint("WrongConstant")
-@RequiresApi(Build.VERSION_CODES.O)
-internal fun Context.createNotificationChannel(
-    name: String,
-    @StringRes description: Int,
-    @androidx.annotation.IntRange(
-        from = IMPORTANCE_NONE.toLong(),
-        to = IMPORTANCE_MAX.toLong()
-    ) importance: Int = IMPORTANCE_MAX
-) {
-    (getSystemService(NotificationManager::class.java) as NotificationManager).createNotificationChannel(
-        NotificationChannel(name, getString(description), importance)
-    )
 }
 
 fun Context.startActivity(clazz: Class<out AppCompatActivity>) {

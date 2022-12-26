@@ -24,6 +24,7 @@ import io.reactivex.rxjava3.core.Observable
 import java.util.concurrent.TimeUnit
 
 fun minutesToMilliseconds(minutes: Long) = minutes * 1000 * 60
+fun millisToMinutes(millis: Long) = millis / 1000 / 60
 
 /** Only for RxView elements!*/
 fun Observable<Unit>.throttleFirst(skipDurationMillis: Long = 750L): Observable<Unit> = compose {
