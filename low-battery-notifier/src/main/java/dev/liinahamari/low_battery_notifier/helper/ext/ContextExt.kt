@@ -62,7 +62,7 @@ internal fun Context.activityImplicitLaunch(
     activity: Class<out Activity>,
     bundle: Bundle? = null
 ) {
-    if (Build.VERSION.SDK_INT >= 29 && isAppInForeground.not()) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && isAppInForeground.not()) {
         ContextCompat.startForegroundService(this, Intent(this, service).apply {
             action = ACTION_SHOW_NOTIFICATION
             bundle?.let(::putExtras)

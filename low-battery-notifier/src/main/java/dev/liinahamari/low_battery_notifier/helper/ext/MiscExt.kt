@@ -23,11 +23,16 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import java.util.concurrent.TimeUnit
 
-fun minutesToMilliseconds(minutes: Long) = minutes * 1000 * 60
-fun millisToMinutes(millis: Long) = millis / 1000 / 60
+private const val MILLIS_IN_SECOND = 1000
+private const val SECONDS_IN_MINUTE = 60
+
+fun minutesToMilliseconds(minutes: Long) = minutes * MILLIS_IN_SECOND * SECONDS_IN_MINUTE
+fun millisToMinutes(millis: Long) = millis / MILLIS_IN_SECOND / SECONDS_IN_MINUTE
+
+private const val DEFAULT_SKIP_DURATION = 750L
 
 /** Only for RxView elements!*/
-fun Observable<Unit>.throttleFirst(skipDurationMillis: Long = 750L): Observable<Unit> = compose {
+fun Observable<Unit>.throttleFirst(skipDurationMillis: Long = DEFAULT_SKIP_DURATION): Observable<Unit> = compose {
     it.throttleFirst(
         skipDurationMillis,
         TimeUnit.MILLISECONDS,

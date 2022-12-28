@@ -1,3 +1,4 @@
+@file:Suppress("TooManyFunctions")
 /*
  * Copyright 2022-2023 liinahamari
  *

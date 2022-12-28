@@ -25,6 +25,8 @@ import dev.liinahamari.low_battery_notifier.services.LowBatteryService
 import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
 import javax.inject.Inject
 
+private const val MAX_BATTERY_CAPACITY_IN_PERCENT = 100
+
 class BatteryStateHandlingUseCase @Inject constructor(
     private val context: Context,
     @JvmField val batteryManager: BatteryManager? = null
@@ -34,7 +36,7 @@ class BatteryStateHandlingUseCase @Inject constructor(
             ?: context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.let { intent ->
                 val level: Int = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
                 val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-                level * 100 / scale.toFloat()
+                level * MAX_BATTERY_CAPACITY_IN_PERCENT / scale.toFloat()
             }?.toInt())?.also {
             if (it < lowBatteryThresholdLevel) {
                 context.activityImplicitLaunch(LowBatteryService::class.java, LowBatteryNotifierActivity::class.java)

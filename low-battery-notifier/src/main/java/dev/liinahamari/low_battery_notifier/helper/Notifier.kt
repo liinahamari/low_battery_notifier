@@ -33,6 +33,8 @@ import dev.liinahamari.low_battery_notifier.helper.ext.isDndEnabled
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
+private const val VIBRATION_ON_OFF_TIMING_MILLIS = 300L
+
 internal class Notifier @Inject constructor(
     private val vibrator: Vibrator,
     private val audioManager: AudioManager,
@@ -40,7 +42,8 @@ internal class Notifier @Inject constructor(
     private val context: Context,
 ) : RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
     private var player: MediaPlayer? = null
-    private val vibrationPattern = longArrayOf(0, 300, 300, 300)
+    private val vibrationPattern =
+        longArrayOf(0, VIBRATION_ON_OFF_TIMING_MILLIS, VIBRATION_ON_OFF_TIMING_MILLIS, VIBRATION_ON_OFF_TIMING_MILLIS)
 
     fun stop() {
         disposeSubscriptions()

@@ -60,7 +60,7 @@ internal class LowBatteryService : ForegroundService(), RxSubscriptionsDelegate 
             }
             ACTION_TERMINATE -> stopSelf()
             ACTION_STOP_FOREGROUND -> stopForeground()
-            else -> throw IllegalStateException()
+            else -> error("Unknown action invoking ${javaClass.name} (${intent.action})")
         }
         return START_NOT_STICKY
     }
