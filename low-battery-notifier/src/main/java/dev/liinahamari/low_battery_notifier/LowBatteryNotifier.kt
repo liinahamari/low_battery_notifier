@@ -16,6 +16,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package dev.liinahamari.low_battery_notifier
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.AlarmManager.INTERVAL_FIFTEEN_MINUTES
 import android.app.NotificationChannel
@@ -37,61 +38,64 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 private const val PREFS_KEY = "Prefs"
 internal const val BATTERY_CHECKER_ID = 101
 
-internal lateinit var mainComponent: MainComponent
+object LowBatteryNotifier {
+    internal lateinit var mainComponent: MainComponent
 
-fun init(
-    context: Context,
-    alarmManager: AlarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager,
-    notificationManager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager,
-    requestStroboscopeFeature: Boolean = false,
-    batteryLevelCheckFrequency: Long = INTERVAL_FIFTEEN_MINUTES,
-    lowBatteryThresholdLevel: Int = DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE
-) {
-    context.applicationContext.apply {
-        applyLibSettings(batteryLevelCheckFrequency, lowBatteryThresholdLevel)
-        initDi()
-        createLowBatteryNotificationChannel(notificationManager)
+    fun init(
+        context: Context,
+        alarmManager: AlarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager,
+        notificationManager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager,
+        requestStroboscopeFeature: Boolean = false,
+        batteryLevelCheckFrequency: Long = INTERVAL_FIFTEEN_MINUTES,
+        lowBatteryThresholdLevel: Int = DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE
+    ) {
+        context.applicationContext.apply {
+            applyLibSettings(batteryLevelCheckFrequency, lowBatteryThresholdLevel)
+            initDi()
+            createLowBatteryNotificationChannel(notificationManager)
 
-        if (lessThanTiramisu()) {
-            alarmManager.scheduleLowBatteryChecker(context = context)
-        }
+            if (lessThanTiramisu()) {
+                alarmManager.scheduleLowBatteryChecker(context = context)
+            }
 
-        ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleListener())
+            ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleListener())
 
-        if (requestStroboscopeFeature || tiramisuOrMore()) {
-            startActivity(AskPermissionActivity::class.java)
+            if (requestStroboscopeFeature || tiramisuOrMore()) {
+                startActivity(AskPermissionActivity::class.java)
+            }
         }
     }
-}
 
-fun Context.createLowBatteryNotificationChannel(notificationManager: NotificationManager) {
-    if (oreoOrMore()) {
-        notificationManager.createNotificationChannel(
-            NotificationChannel(
-                CHANNEL_BATTERY_LOW_ID,
-                getString(R.string.title_channel_low_battery),
-                NotificationManager.IMPORTANCE_MAX
+    @SuppressLint("WrongConstant")
+    private fun Context.createLowBatteryNotificationChannel(notificationManager: NotificationManager) {
+        if (oreoOrMore()) {
+            notificationManager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_BATTERY_LOW_ID,
+                    getString(R.string.title_channel_low_battery),
+                    NotificationManager.IMPORTANCE_MAX
+                )
             )
-        )
-    }
-}
-
-private fun Context.applyLibSettings(
-    checkingFrequency: Long, lowBatteryThresholdLevel: Int
-) {
-    Completable.fromCallable {
-        with(Config) {
-            preferences = getSharedPreferences(PREFS_KEY, MODE_PRIVATE)
-            this.batteryLevelCheckFrequency = checkingFrequency
-            this.lowBatteryThresholdLevel = lowBatteryThresholdLevel
         }
     }
-        .subscribeOn(Schedulers.io())
-        .subscribe()
-}
 
-private fun Context.initDi() {
-    mainComponent = DaggerMainComponent.builder()
-        .context(this)
-        .build()
+    private fun Context.applyLibSettings(
+        checkingFrequency: Long, lowBatteryThresholdLevel: Int
+    ) {
+        Completable.fromCallable {
+            with(Config) {
+                preferences = getSharedPreferences(PREFS_KEY, MODE_PRIVATE)
+                this.batteryLevelCheckFrequency = checkingFrequency
+                this.lowBatteryThresholdLevel = lowBatteryThresholdLevel
+            }
+        }
+            .subscribeOn(Schedulers.io())
+            .subscribe()
+    }
+
+    private fun Context.initDi() {
+        mainComponent = DaggerMainComponent.builder()
+            .context(this)
+            .build()
+    }
 }

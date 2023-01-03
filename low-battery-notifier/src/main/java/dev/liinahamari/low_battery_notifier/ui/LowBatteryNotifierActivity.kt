@@ -21,13 +21,13 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.jakewharton.rxbinding4.view.clicks
+import dev.liinahamari.low_battery_notifier.LowBatteryNotifier.mainComponent
 import dev.liinahamari.low_battery_notifier.R
 import dev.liinahamari.low_battery_notifier.databinding.ActivityLowBatteryNotifierBinding
 import dev.liinahamari.low_battery_notifier.helper.Notifier
 import dev.liinahamari.low_battery_notifier.helper.RxSubscriptionDelegateImpl
 import dev.liinahamari.low_battery_notifier.helper.RxSubscriptionsDelegate
 import dev.liinahamari.low_battery_notifier.helper.ext.throttleFirst
-import dev.liinahamari.low_battery_notifier.mainComponent
 import dev.liinahamari.low_battery_notifier.services.ACTION_TERMINATE
 import dev.liinahamari.low_battery_notifier.services.DEFAULT_ALARM_PLAYING_TIME
 import dev.liinahamari.low_battery_notifier.services.LowBatteryService

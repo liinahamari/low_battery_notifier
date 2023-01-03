@@ -21,7 +21,7 @@ import androidx.lifecycle.LifecycleOwner
 
 @Volatile var isAppInForeground = false
 
-class AppLifecycleListener : DefaultLifecycleObserver {
+internal class AppLifecycleListener : DefaultLifecycleObserver {
 
     override fun onStart(owner: LifecycleOwner) {
         isAppInForeground = true

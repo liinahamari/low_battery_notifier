@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 private const val MAX_BATTERY_CAPACITY_IN_PERCENT = 100
 
-class BatteryStateHandlingUseCase @Inject constructor(
+internal class BatteryStateHandlingUseCase @Inject constructor(
     private val context: Context,
     @JvmField val batteryManager: BatteryManager? = null
 ) {

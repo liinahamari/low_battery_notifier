@@ -24,7 +24,6 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -36,7 +35,7 @@ import dev.liinahamari.low_battery_notifier.services.ACTION_SHOW_NOTIFICATION
 import dev.liinahamari.low_battery_notifier.services.ACTION_STOP_FOREGROUND
 
 /** Runs once-an-hour checker of battery state */
-fun AlarmManager.scheduleLowBatteryChecker(initialDelayInMinutes: Long = 1L, context: Context) {
+internal fun AlarmManager.scheduleLowBatteryChecker(initialDelayInMinutes: Long = 1L, context: Context) {
     setRepeating(
         AlarmManager.RTC_WAKEUP,
         System.currentTimeMillis() + minutesToMilliseconds(initialDelayInMinutes),
@@ -50,7 +49,7 @@ fun AlarmManager.scheduleLowBatteryChecker(initialDelayInMinutes: Long = 1L, con
     )
 }
 
-fun ContentResolver.isDndEnabled(): Boolean = kotlin.runCatching {
+internal fun ContentResolver.isDndEnabled(): Boolean = kotlin.runCatching {
     Settings.Global.getInt(this, "zen_mode")
 }.getOrNull()?.equals(1) ?: true
 
@@ -59,26 +58,29 @@ fun ContentResolver.isDndEnabled(): Boolean = kotlin.runCatching {
  * */
 internal fun Context.activityImplicitLaunch(
     service: Class<out Service>,
-    activity: Class<out Activity>,
-    bundle: Bundle? = null
+    activity: Class<out Activity>
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && isAppInForeground.not()) {
         ContextCompat.startForegroundService(this, Intent(this, service).apply {
             action = ACTION_SHOW_NOTIFICATION
-            bundle?.let(::putExtras)
         })
     } else {
         startService(Intent(this, service).setAction(ACTION_STOP_FOREGROUND))
 
         startActivity(Intent(this, activity).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            bundle?.let(::putExtras)
         })
     }
 }
 
-fun Context.startActivity(clazz: Class<out AppCompatActivity>) {
+internal fun Context.startActivity(clazz: Class<out AppCompatActivity>) {
     startActivity(Intent(this, clazz).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     })
+}
+
+internal fun Service.stopForeground() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+    stopForeground(Service.STOP_FOREGROUND_REMOVE)
+} else {
+    @Suppress("DEPRECATION") stopForeground(true)
 }

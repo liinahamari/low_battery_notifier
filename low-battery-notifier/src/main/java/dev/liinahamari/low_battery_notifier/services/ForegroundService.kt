@@ -22,7 +22,6 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.Service
 import android.content.Intent
 import android.graphics.Color
-import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import dev.liinahamari.low_battery_notifier.helper.ext.toColorfulString
@@ -60,7 +59,6 @@ internal abstract class ForegroundService : Service() {
     )
 
     protected fun getFullscreenIntent(
-        bundle: Bundle?,
         activity: Class<out Activity>
     ): PendingIntent = PendingIntent.getActivity(
         this,
@@ -68,7 +66,6 @@ internal abstract class ForegroundService : Service() {
         Intent(this, activity)
             .apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                bundle?.let { putExtras(bundle) }
             },
         FLAG_IMMUTABLE
     )

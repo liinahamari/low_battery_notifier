@@ -19,9 +19,8 @@ package dev.liinahamari.low_battery_notifier.services
 import android.app.Activity
 import android.app.Notification
 import android.content.Intent
-import android.media.RingtoneManager
+import android.media.RingtoneManager.TYPE_NOTIFICATION
 import android.media.RingtoneManager.getDefaultUri
-import android.os.Build
 import android.os.IBinder
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
@@ -30,6 +29,7 @@ import androidx.core.app.NotificationCompat.PRIORITY_MAX
 import dev.liinahamari.low_battery_notifier.R
 import dev.liinahamari.low_battery_notifier.helper.RxSubscriptionDelegateImpl
 import dev.liinahamari.low_battery_notifier.helper.RxSubscriptionsDelegate
+import dev.liinahamari.low_battery_notifier.helper.ext.stopForeground
 import dev.liinahamari.low_battery_notifier.ui.LowBatteryNotifierActivity
 import java.security.SecureRandom
 
@@ -52,35 +52,28 @@ internal class LowBatteryService : ForegroundService(), RxSubscriptionsDelegate 
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
         when (intent.action) {
             ACTION_SHOW_NOTIFICATION -> {
-                timer.addToDisposable(::stopSelf)
+                timer.addToDisposable(::stopForeground)
                 startForeground(SecureRandom().nextInt(), formNotification(intent))
             }
-            ACTION_TERMINATE -> stopSelf()
+            ACTION_TERMINATE -> stopForeground()
             ACTION_STOP_FOREGROUND -> stopForeground()
             else -> error("Unknown action invoking ${javaClass.name} (${intent.action})")
         }
         return START_NOT_STICKY
     }
 
-    private fun stopForeground() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        stopForeground(STOP_FOREGROUND_REMOVE)
-    } else {
-        @Suppress("DEPRECATION") stopForeground(true)
-    }
-
     private fun formNotification(intent: Intent): Notification =
         NotificationCompat.Builder(this@LowBatteryService, CHANNEL_BATTERY_LOW_ID)
-            .setSound(getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .setSound(getDefaultUri(TYPE_NOTIFICATION))
             .setSmallIcon(getIcon())
             .setContentText(getTitle(intent))
             .addAction(getCancelAction())
             .setPriority(PRIORITY_MAX)
             .setOngoing(true) // to make the notification to be non-dismissable by the user (API >=33)
             .setCategory(CATEGORY_ALARM)
-            .setFullScreenIntent(getFullscreenIntent(intent.extras, getActivity()), true)
+            .setFullScreenIntent(getFullscreenIntent(getActivity()), true)
             .build()
 
     override fun onBind(intent: Intent?): IBinder? = null

@@ -24,8 +24,8 @@ import android.view.WindowManager.LayoutParams.*
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import dev.liinahamari.low_battery_notifier.LowBatteryNotifier.mainComponent
 import dev.liinahamari.low_battery_notifier.helper.ext.minutesToMilliseconds
-import dev.liinahamari.low_battery_notifier.mainComponent
 import dev.liinahamari.low_battery_notifier.services.DEFAULT_ALARM_PLAYING_TIME
 import javax.inject.Inject
 

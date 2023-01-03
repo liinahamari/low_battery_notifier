@@ -26,20 +26,21 @@ import java.util.concurrent.TimeUnit
 private const val MILLIS_IN_SECOND = 1000
 private const val SECONDS_IN_MINUTE = 60
 
-fun minutesToMilliseconds(minutes: Long) = minutes * MILLIS_IN_SECOND * SECONDS_IN_MINUTE
-fun millisToMinutes(millis: Long) = millis / MILLIS_IN_SECOND / SECONDS_IN_MINUTE
+internal fun minutesToMilliseconds(minutes: Long) = minutes * MILLIS_IN_SECOND * SECONDS_IN_MINUTE
+internal fun millisToMinutes(millis: Long) = millis / MILLIS_IN_SECOND / SECONDS_IN_MINUTE
 
 private const val DEFAULT_SKIP_DURATION = 750L
 
 /** Only for RxView elements!*/
-fun Observable<Unit>.throttleFirst(skipDurationMillis: Long = DEFAULT_SKIP_DURATION): Observable<Unit> = compose {
-    it.throttleFirst(
-        skipDurationMillis,
-        TimeUnit.MILLISECONDS,
-        AndroidSchedulers.mainThread()
-    )
-}
+internal fun Observable<Unit>.throttleFirst(skipDurationMillis: Long = DEFAULT_SKIP_DURATION): Observable<Unit> =
+    compose {
+        it.throttleFirst(
+            skipDurationMillis,
+            TimeUnit.MILLISECONDS,
+            AndroidSchedulers.mainThread()
+        )
+    }
 
-fun String.toColorfulString(@ColorInt color: Int) = SpannableString(this).apply {
+internal fun String.toColorfulString(@ColorInt color: Int) = SpannableString(this).apply {
     setSpan(ForegroundColorSpan(color), 0, length, 0)
 }
