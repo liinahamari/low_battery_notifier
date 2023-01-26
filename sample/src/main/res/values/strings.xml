@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Low Battery Notifier</string>
+    <string name="title_init_low_battery_library">Init Low Battery Library</string>
+    <string name="title_low_battery_threshold">Low Battery Threshold</string>
 </resources>
