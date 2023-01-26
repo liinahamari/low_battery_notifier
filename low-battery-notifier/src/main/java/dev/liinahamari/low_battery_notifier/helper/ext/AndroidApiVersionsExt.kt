@@ -10,3 +10,6 @@ internal fun lessThanTiramisu(): Boolean = Build.VERSION.SDK_INT < Build.VERSION
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
 internal fun oreoOrMore(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.P)
+internal fun pieOrMore(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P

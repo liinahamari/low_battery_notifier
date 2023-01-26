@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         super.onCreate(savedInstanceState)
         findViewById<Button>(R.id.button).setOnClickListener {
             lowBatteryNotifier = LowBatteryNotifier.also {
-                it.init(application, requestStroboscopeFeature = true)
+                it.init(application, requestStroboscopeFeature = true, lowBatteryThresholdLevel = 100)
             }
         }
     }

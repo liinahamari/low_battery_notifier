@@ -19,18 +19,17 @@ package dev.liinahamari.low_battery_notifier.helper
 import android.Manifest.permission.CAMERA
 import android.content.Context
 import android.content.pm.PackageManager
-import android.media.AudioAttributes
 import android.media.AudioManager
+import android.media.AudioManager.RINGER_MODE_NORMAL
 import android.media.AudioManager.RINGER_MODE_SILENT
-import android.media.MediaPlayer
-import android.media.RingtoneManager.TYPE_ALARM
-import android.media.RingtoneManager.getDefaultUri
-import android.os.Build
+import android.media.Ringtone
+import android.media.RingtoneManager.*
 import android.os.VibrationEffect.createWaveform
 import android.os.Vibrator
 import androidx.core.content.ContextCompat.checkSelfPermission
-import dev.liinahamari.low_battery_notifier.helper.ext.isDndEnabled
-import io.reactivex.rxjava3.core.Single
+import dev.liinahamari.low_battery_notifier.helper.ext.isDndDisabled
+import dev.liinahamari.low_battery_notifier.helper.ext.oreoOrMore
+import dev.liinahamari.low_battery_notifier.helper.ext.pieOrMore
 import javax.inject.Inject
 
 private const val VIBRATION_ON_OFF_TIMING_MILLIS = 300L
@@ -41,7 +40,7 @@ internal class Notifier @Inject constructor(
     private val stroboscope: Stroboscope,
     private val context: Context,
 ) : RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
-    private var player: MediaPlayer? = null
+    private var ringtone: Ringtone? = null
     private val vibrationPattern =
         longArrayOf(0, VIBRATION_ON_OFF_TIMING_MILLIS, VIBRATION_ON_OFF_TIMING_MILLIS, VIBRATION_ON_OFF_TIMING_MILLIS)
 
@@ -49,8 +48,8 @@ internal class Notifier @Inject constructor(
         disposeSubscriptions()
         vibrator.cancel()
         stroboscope.releaseStroboscope()
-        player?.release()
-        player = null
+        ringtone?.stop()
+        ringtone = null
     }
 
     fun start() {
@@ -65,7 +64,7 @@ internal class Notifier @Inject constructor(
 
     private fun vibrate() {
         if (audioManager.ringerMode != RINGER_MODE_SILENT) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (oreoOrMore()) {
                 vibrator.vibrate(createWaveform(vibrationPattern, 0))
             } else {
                 @Suppress("DEPRECATION") vibrator.vibrate(vibrationPattern, 0)
@@ -74,29 +73,14 @@ internal class Notifier @Inject constructor(
     }
 
     private fun ring() {
-        if (context.contentResolver.isDndEnabled().not()) {
-            Single.just(MediaPlayer())
-                .map { it.apply(::setupMediaPlayer) }
-                .doOnError { it.printStackTrace() }
-                .subscribeUi {
-                    player = it
-                    it.prepare()
-                    it.start()
+        if (audioManager.ringerMode == RINGER_MODE_NORMAL && context.isDndDisabled()) {
+            with(getRingtone(context, getDefaultUri(TYPE_ALARM))) {
+                ringtone = this
+                if (pieOrMore()) {
+                    isLooping = true
                 }
+                play()
+            }
         }
     }
-
-    private fun setupMediaPlayer(mediaPlayer: MediaPlayer) {
-        with(mediaPlayer) {
-            reset()
-            setAudioAttributes(audioAttributes)
-            setDataSource(context, getDefaultUri(TYPE_ALARM))
-            isLooping = true
-        }
-    }
-
-    private val audioAttributes: AudioAttributes = AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_ALARM)
-        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-        .build()
 }

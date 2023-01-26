@@ -38,7 +38,7 @@ internal class BatteryStateHandlingUseCase @Inject constructor(
                 val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
                 level * MAX_BATTERY_CAPACITY_IN_PERCENT / scale.toFloat()
             }?.toInt())?.also {
-            if (it < lowBatteryThresholdLevel) {
+            if (it <= lowBatteryThresholdLevel) {
                 context.activityImplicitLaunch(LowBatteryService::class.java, LowBatteryNotifierActivity::class.java)
             }
         }

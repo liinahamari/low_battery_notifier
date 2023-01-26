@@ -49,9 +49,9 @@ internal fun AlarmManager.scheduleLowBatteryChecker(initialDelayInMinutes: Long 
     )
 }
 
-internal fun ContentResolver.isDndEnabled(): Boolean = kotlin.runCatching {
-    Settings.Global.getInt(this, "zen_mode")
-}.getOrNull()?.equals(1) ?: true
+internal fun Context.isDndDisabled(): Boolean = kotlin.runCatching {
+    Settings.Global.getInt(applicationContext.contentResolver, "zen_mode")
+}.getOrNull()?.equals(0) ?: false
 
 /** workaround for Android 10 restrictions to launch activities in background:
  *  https://developer.android.com/guide/components/activities/background-starts
