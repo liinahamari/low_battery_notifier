@@ -16,7 +16,32 @@
 
 package dev.liinahamari.low_battery_notifier.helper.ext
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 internal fun Int.toTimeUnit(): TimeUnit = TimeUnit.values()[this]
 internal fun TimeUnit.getIndex(): Int = TimeUnit.values().indexOf(this)
+
+/**
+ * Takes into consideration that the interval may span across midnight
+ *
+ * @return true if given time is inside the specified interval and false otherwise
+ */
+@Suppress("NAME_SHADOWING")
+@RequiresApi(Build.VERSION_CODES.O)
+fun LocalTime.inRangeOf(start: String, end: String): Boolean {
+    val start = LocalTime.parse(start)
+    val end = LocalTime.parse(end)
+    if (end.isBefore(start)) {
+        if (isAfter(start) && isAfter(end)) {
+            return true
+        }
+        return isBefore(start) && isBefore(end)
+    }
+
+    return if (end.isAfter(start)) {
+        isAfter(start) && isBefore(end)
+    } else false
+}

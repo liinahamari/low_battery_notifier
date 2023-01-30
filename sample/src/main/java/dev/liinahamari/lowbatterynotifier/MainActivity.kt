@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dev.liinahamari.low_battery_notifier.LowBatteryNotifier
+import dev.liinahamari.low_battery_notifier.RestrictedTime
 import dev.liinahamari.lowbatterynotifier.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -31,7 +32,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 it.init(
                     application,
                     requestStroboscopeFeature = true,
-                    lowBatteryThresholdLevel = ui.thresholdSlider.value.toInt()
+                    lowBatteryThresholdLevel = ui.thresholdSlider.value.toInt(),
+                    restrictedTime = RestrictedTime("23:00", "09:00")
                 )
                 ui.initLibBtn.isEnabled = false
             } catch (e: Throwable) {

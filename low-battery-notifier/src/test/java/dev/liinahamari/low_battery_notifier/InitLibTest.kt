@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build.VERSION_CODES.*
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import dev.liinahamari.low_battery_notifier.LowBatteryNotifier.init
 import dev.liinahamari.low_battery_notifier.helper.ext.millisToMinutes
 import dev.liinahamari.low_battery_notifier.helper.ext.startActivity
 import dev.liinahamari.low_battery_notifier.ui.AskPermissionActivity

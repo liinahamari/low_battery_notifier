@@ -19,6 +19,8 @@ package dev.liinahamari.low_battery_notifier.helper
 import android.app.AlarmManager.INTERVAL_FIFTEEN_MINUTES
 import android.content.SharedPreferences
 import dev.liinahamari.low_battery_notifier.BuildConfig
+import dev.liinahamari.low_battery_notifier.RestrictedTime
+import dev.liinahamari.low_battery_notifier.RestrictedTime.Companion.fromString
 import dev.liinahamari.low_battery_notifier.helper.ext.getIndex
 import dev.liinahamari.low_battery_notifier.helper.ext.minutesToMilliseconds
 import dev.liinahamari.low_battery_notifier.helper.ext.toTimeUnit
@@ -31,9 +33,14 @@ private const val BATTERY_LEVEL_CHECK_FREQUENCY = "battery_level_check_frequency
 private const val STROBOSCOPE_ON = "stroboscope_on"
 private const val STROBOSCOPE_FREQUENCY = "stroboscope_frequency"
 private const val STROBOSCOPE_FREQUENCY_TIME_UNIT = "stroboscope_frequency_time_unit"
+private const val RESTRICTED_TIME = "restricted_time"
 
 internal object Config {
     lateinit var preferences: SharedPreferences
+
+    var restrictedTime: RestrictedTime?
+        get() = preferences.getString(RESTRICTED_TIME, null)?.fromString()
+        set(time) = preferences.edit().putString(RESTRICTED_TIME, time?.toString()).apply()
 
     var lowBatteryThresholdLevel: Int
         get() = preferences.getInt(BATTERY_LOW_THRESHOLD_LEVEL, DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE)

@@ -38,6 +38,14 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 private const val PREFS_KEY = "Prefs"
 internal const val BATTERY_CHECKER_ID = 101
 
+data class RestrictedTime(val from: String, val to: String) {
+    override fun toString(): String = "${from};${to}"
+
+    companion object {
+        fun String.fromString(): RestrictedTime = RestrictedTime(split(";").first(), split(";")[1])
+    }
+}
+
 object LowBatteryNotifier {
     internal lateinit var mainComponent: MainComponent
 
@@ -47,10 +55,11 @@ object LowBatteryNotifier {
         notificationManager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager,
         requestStroboscopeFeature: Boolean = false,
         batteryLevelCheckFrequency: Long = INTERVAL_FIFTEEN_MINUTES,
-        lowBatteryThresholdLevel: Int = DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE
+        lowBatteryThresholdLevel: Int = DEFAULT_LOW_BATTERY_THRESHOLD_PERCENTAGE,
+        restrictedTime: RestrictedTime? = null
     ) {
         context.applicationContext.apply {
-            applyLibSettings(batteryLevelCheckFrequency, lowBatteryThresholdLevel)
+            applyLibSettings(batteryLevelCheckFrequency, lowBatteryThresholdLevel, restrictedTime)
             initDi()
             createLowBatteryNotificationChannel(notificationManager)
 
@@ -80,13 +89,14 @@ object LowBatteryNotifier {
     }
 
     private fun Context.applyLibSettings(
-        checkingFrequency: Long, lowBatteryThresholdLevel: Int
+        checkingFrequency: Long, lowBatteryThresholdLevel: Int, restrictedTime: RestrictedTime?
     ) {
         Completable.fromCallable {
             with(Config) {
                 preferences = getSharedPreferences(PREFS_KEY, MODE_PRIVATE)
                 this.batteryLevelCheckFrequency = checkingFrequency
                 this.lowBatteryThresholdLevel = lowBatteryThresholdLevel
+                restrictedTime?.let { this.restrictedTime = it }
             }
         }
             .subscribeOn(Schedulers.io())

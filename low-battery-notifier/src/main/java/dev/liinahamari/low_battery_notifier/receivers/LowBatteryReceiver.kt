@@ -19,9 +19,12 @@ package dev.liinahamari.low_battery_notifier.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.O
 import dev.liinahamari.low_battery_notifier.LowBatteryNotifier.mainComponent
 import dev.liinahamari.low_battery_notifier.helper.BatteryStateHandlingUseCase
 import dev.liinahamari.low_battery_notifier.helper.Config
+import dev.liinahamari.low_battery_notifier.helper.RestrictedTimeProcessor
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -29,6 +32,7 @@ import javax.inject.Inject
 
 internal class LowBatteryReceiver : BroadcastReceiver() {
     @Inject internal lateinit var batteryStateHandlingUseCase: BatteryStateHandlingUseCase
+    @Inject internal lateinit var restrictedTimeProcessor: RestrictedTimeProcessor
 
     override fun onReceive(context: Context, intent: Intent) {
         mainComponent.inject(this)
@@ -36,6 +40,7 @@ internal class LowBatteryReceiver : BroadcastReceiver() {
         Single.fromCallable { Config.lowBatteryThresholdLevel }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .filter { SDK_INT < O || (SDK_INT >= O && restrictedTimeProcessor.isAllowedToCheckBatteryState().not()) }
             .subscribe(batteryStateHandlingUseCase::execute)
     }
 }
